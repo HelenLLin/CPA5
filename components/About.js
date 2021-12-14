@@ -20,7 +20,12 @@ function About() {
             You can clear the list at any point.
             {"\n"}
             {"\n"}
-            In Development:
+        </Text>
+        <Text style = {{fontSize: 40, fontFamily: 'Playfair Display', fontWeight:'bold', textAlign: 'center', }}>
+            Dev Notes
+        </Text>
+        <Text style = {{fontSize: 20, fontFamily: 'Playfair Display', textAlign: 'center', }}>
+            Features In Development:
             {"\n"}
             • Deletion of single items from list
             {"\n"}
