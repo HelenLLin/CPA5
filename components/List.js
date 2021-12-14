@@ -1,6 +1,7 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import {View, SafeAreaView, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity, } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 function List({navigation, route}) {
@@ -8,6 +9,8 @@ function List({navigation, route}) {
     const[dueDate, setDueDate] = useState('')
     const[completed, setCompleted] = useState(false)
     const[toDoList, setToDoList] = useState([]);
+
+    useEffect(() => {getToDo()}, [])
 
     const addToDo = async(value) => {
         try {
@@ -20,9 +23,27 @@ function List({navigation, route}) {
         }
     }
 
+    const getToDo = async() => {
+        try {
+            const jsonValue = await AsyncStorage.getItem('@toDoList')
+            let data = null
+            if(jsonValue != null) {
+                data = JSON.parse(jsonValue)
+                setToDoList(data)
+            } else {
+                setToDoList([])
+                setToDo('')
+                setDueDate('')
+                setCompleted('')
+            }
+        } catch(e) {
+            console.log('cound not get data')
+            console.dir(e)
+    }}
+
     const renderToDoList = ({item}) => {
         return(
-            <View style={{flexDirection: 'column', backgroundColor: '#c7eaec', padding: 20, marginVertical: 8, marginHorizontal: 16, }}>
+            <View style={styles.flatlistItem}>
                 <TouchableOpacity style = {{}}
                     onPress={() => {}}>
                     <Text style={{fontSize:20, }}>{item.toDo} </Text>
@@ -30,6 +51,15 @@ function List({navigation, route}) {
                 </TouchableOpacity>
             </View>
         )
+    }
+
+    const clearData = async() => {
+        try {
+            await AsyncStorage.clear()
+        } catch(e) {
+            console.log('could not clear data')
+            console.dir(e)
+        }
     }
 
   return (
@@ -74,30 +104,31 @@ function List({navigation, route}) {
           />
         </View>
       </View>
-      <SafeAreaView style={{flex: 15, alignItems: 'left', justifyContent: 'flex-start', }}>
+      <SafeAreaView style={styles.flatlist}>
           <FlatList
               data={toDoList}
               renderItem={renderToDoList}
               keyExtractor={item => item.toDo}
           />
       </SafeAreaView>
-      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-around', }}>
-
-      <SafeAreaView style={{width: '20%', margin: 10, }}>
+      <View style={styles.botRowButtons}>
+      <SafeAreaView style={styles.button}>
         <Button
           title = 'history'
           color = 'black'
-          onPress = {() => navigation.navigate('History')}
+          onPress = {() => navigation.navigate('History', {data: toDoList})}
         />
       </SafeAreaView>
-      <SafeAreaView style={{width: '20%', margin: 10, }}>
+      <SafeAreaView style={styles.button}>
           <Button
             title = 'clear list'
             color = 'black'
-            onPress = {() => setToDoList([])}
+            onPress = {() => {
+                clearData()
+                setToDoList([])}}
           />
       </SafeAreaView>
-      <SafeAreaView style={{width: '20%', margin: 10, }}>
+      <SafeAreaView style={styles.button}>
           <Button
             title = 'about'
             color = 'black'
@@ -122,6 +153,27 @@ const styles = StyleSheet.create({
     fontFamily: 'Playfair Display',
     textAlign: 'center',
   },
-});
+  button: {
+    width: '20%',
+    margin: 10,
+  },
+  botRowButtons: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  flatlist: {
+    flex: 15,
+    alignItems: 'left',
+    justifyContent: 'flex-start',
+  },
+  flatlistItem: {
+    flexDirection: 'column',
+    backgroundColor: '#c7eaec',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+})
 
 export default List;
