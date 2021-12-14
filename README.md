@@ -9,5 +9,4 @@ The Daily Organizer App is here to help you keep track of your assignments and t
 The Daily Organizer App is coded using React Native. The main packages being used are Button, Text, TextInput, TouchableOpacity, Flatlist, and ScrollView. These packages allow the app to be user-friendly and easy to use for individuals of all ages.
 
 # Link to Desktop Preview
-
-# Link to Phone Preview
+https://drive.google.com/file/d/1xhBHoMu6okkAf5gzYQmZ0KwWtCALEk9q/view?usp=sharing
